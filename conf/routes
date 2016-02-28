@@ -5,6 +5,8 @@
 # Home page
 GET     /db                         controllers.Application.db
 GET     /api/people                 controllers.Application.people
+POST    /api/expense                expenses.controllers.ExpenseController.create
+GET     /api/expense                expenses.controllers.ExpenseController.query
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /                           controllers.Assets.at(path="/public", file="index.html")
