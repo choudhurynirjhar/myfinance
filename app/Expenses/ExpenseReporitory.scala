@@ -5,9 +5,10 @@ import play.api.Play.current
 import java.sql._
 
 import expenses.models._
+import infrastructure._
 
 object ExpenseRepository {
-    def create(item: String, vendor: String, price: Double, location: String) = {
+    def create(item: String, vendor: String, price: Double, location: String) : Either[FailResult, Unit] = {
         val conn = DB.getConnection()
         try {
             val stmt = conn.createStatement
@@ -19,8 +20,10 @@ object ExpenseRepository {
                                         price decimal, 
                                         location text)""")
             stmt.executeUpdate(s"INSERT INTO expenses VALUES ('$item', '$vendor', $price, '$location')")
-        }
-        finally {
+            Right(Unit)
+        } catch { 
+            case e:SQLException => Left(FailResult(e.toString))
+        } finally {
             conn.close()
         }
     }

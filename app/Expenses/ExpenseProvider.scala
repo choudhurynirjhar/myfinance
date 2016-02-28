@@ -5,15 +5,18 @@ import play.api.Play.current
 import java.sql._
 
 import expenses.models._
+import infrastructure._
 
 object ExpenseProvider {
-    def get : Seq[Expense] = {
+    def query : Either[FailResult, Seq[Expense]] = {
         val conn = DB.getConnection()
         try {
             val stmt = conn.createStatement
 
             val rs = stmt.executeQuery("SELECT item, vendor, price, location FROM expenses")
-            createExpense(rs)
+            Right(createExpense(rs))
+        } catch { 
+            case e:SQLException => Left(FailResult(e.toString))
         } finally {
             conn.close()
         }
