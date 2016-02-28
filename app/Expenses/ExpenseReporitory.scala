@@ -8,7 +8,7 @@ import expenses.models._
 import infrastructure._
 
 object ExpenseRepository {
-    def create(item: String, vendor: String, price: Double, location: String) : Either[FailResult, Unit] = {
+    def create(exp: Expense) : Either[FailResult, Unit] = {
         val conn = DB.getConnection()
         try {
             val stmt = conn.createStatement
@@ -19,7 +19,7 @@ object ExpenseRepository {
                                         vendor varchar(255), 
                                         price decimal, 
                                         location text)""")
-            stmt.executeUpdate(s"INSERT INTO expenses VALUES ('$item', '$vendor', $price, '$location')")
+            stmt.executeUpdate(s"INSERT INTO expenses VALUES ('${exp.item}', '${exp.vendor}', ${exp.price}, '${exp.location}')")
             Right(Unit)
         } catch { 
             case e:SQLException => Left(FailResult(e.toString))
